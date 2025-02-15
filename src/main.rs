@@ -3,6 +3,8 @@ use std::io::{stdout, Write};
 use termion::{clear, cursor};
 use termion::raw::{IntoRawMode, RawTerminal};
 
+use std::env;
+
 fn move_cursor(stdout: &mut RawTerminal<std::io::Stdout>, x: u16, y: u16) {
 	// UNIX
 	write!(stdout, "{}", cursor::Goto(x, y)).unwrap();
@@ -69,10 +71,18 @@ impl Canvas {
 	}
 }
 
+fn extract_args() -> usize {
+	let args: Vec<String> = env::args().collect();
+
+	if !(args.len() == 2) { 0 }
+	else if let Ok(x) = args[1].parse::<usize>() { x }
+	else { 0 }
+}
+
 fn main() {
-	let mut canvas = Canvas::init(10,10);
+	let player_num = extract_args();
+
+	let mut canvas = Canvas::init(60 + player_num * 2,40);
 	canvas.clear();
-	canvas.draw();
-	//canvas.prev[0][0] = Cell::Human;
 	canvas.draw();
 }
